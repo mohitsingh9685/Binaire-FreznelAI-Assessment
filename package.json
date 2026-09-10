@@ -1,0 +1,11 @@
+{
+  "name": "binaire-freznel-ai-assessment",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "sync-models": "node scripts/sync-models.js",
+    "build": "node scripts/sync-models.js",
+    "start": "node server.js"
+  }
+}

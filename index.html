@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Search, filter and compare AI models" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/tokens@16.0.2/dist/css/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/page@9.2.0/dist/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/typography@8.2.0/dist/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/button@14.2.0/dist/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/textfield@8.2.0/dist/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/fieldlabel@10.2.0/dist/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/card@11.2.0/dist/index.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@spectrum-css/link@7.2.0/dist/index.css" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect width='40' height='40' rx='8' fill='%233b82f6'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='sans-serif' font-weight='700' font-size='24'%3EF%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <title>Freznel Model Selector</title>
+  </head>
+  <body class="spectrum spectrum--medium spectrum--light">
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">F</div>
+          <div>
+            <h1 class="spectrum-Heading spectrum-Heading--sizeS">FRZi Model Selector</h1>
+            <p class="spectrum-Body spectrum-Body--sizeXS">Find the right model for your project</p>
+          </div>
+        </div>
+        <div id="connectionBadge" class="connection-badge">
+          <span class="connection-dot"></span>
+          <span id="connectionText">Checking connection</span>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar">
+          <div class="sidebar-heading">
+            <h2 class="spectrum-Heading spectrum-Heading--sizeXS">Filters</h2>
+            <button id="clearFilters" class="spectrum-Link link-button" type="button">Clear all</button>
+          </div>
+
+          <div class="filter-group">
+            <label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM" for="searchField">Search by</label>
+            <select id="searchField" class="select-input">
+              <option value="name">Model name &amp; ID</option>
+              <option value="family">Model family</option>
+              <option value="all">All fields</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM" for="pipelineFilter">Pipeline tag</label>
+            <select id="pipelineFilter" class="select-input">
+              <option value="">All pipelines</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM" for="familyFilter">Family tag</label>
+            <select id="familyFilter" class="select-input">
+              <option value="">All families</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM" for="architectureFilter">Architecture tag</label>
+            <select id="architectureFilter" class="select-input">
+              <option value="">All architectures</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label class="spectrum-FieldLabel spectrum-FieldLabel--sizeM" for="weightFilter">Weight tag</label>
+            <select id="weightFilter" class="select-input">
+              <option value="">All weight formats</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <span class="spectrum-FieldLabel spectrum-FieldLabel--sizeM">Safetensor files</span>
+            <div class="range-fields">
+              <div class="spectrum-Textfield">
+                <input id="minFiles" class="spectrum-Textfield-input" type="number" min="0" placeholder="Min" aria-label="Minimum safetensor files" />
+              </div>
+              <span class="range-separator">to</span>
+              <div class="spectrum-Textfield">
+                <input id="maxFiles" class="spectrum-Textfield-input" type="number" min="0" placeholder="Max" aria-label="Maximum safetensor files" />
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="results-panel">
+          <div class="toolbar">
+            <div class="spectrum-Textfield">
+              <input id="searchInput" class="spectrum-Textfield-input" type="search" placeholder="Search models" autocomplete="off" aria-label="Search models" />
+            </div>
+            <select id="sortSelect" class="select-input" aria-label="Sort models">
+              <option value="">Recommended order</option>
+              <option value="name-asc">Name: A to Z</option>
+              <option value="name-desc">Name: Z to A</option>
+              <option value="files-asc">Safetensor files: Low to high</option>
+              <option value="files-desc">Safetensor files: High to low</option>
+            </select>
+          </div>
+
+          <div class="results-heading">
+            <p class="spectrum-Body spectrum-Body--sizeXS"><strong id="resultCount">0</strong> of <span id="totalCount">0</span> models</p>
+            <span id="dataStatus" class="spectrum-Body spectrum-Body--sizeXS">Loading model data</span>
+          </div>
+
+          <div id="selectedModel" class="selected-model" hidden>
+            <div>
+              <span class="selected-label">Selected model</span>
+              <strong id="selectedModelName"></strong>
+            </div>
+            <div class="selected-actions">
+              <a id="selectedModelLink" class="spectrum-Link" target="_blank" rel="noopener noreferrer">Open repository</a>
+              <button id="deselectModel" class="spectrum-Link link-button deselect-button" type="button">Deselect</button>
+            </div>
+          </div>
+
+          <div id="message" class="message-card">
+            <span class="loader"></span>
+            <p class="spectrum-Body spectrum-Body--sizeS">Loading models...</p>
+          </div>
+
+          <div id="modelList" class="model-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

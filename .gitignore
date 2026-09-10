@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.env.local
+src/firebase-config.js
+models.json.download
